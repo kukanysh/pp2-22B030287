@@ -136,13 +136,14 @@ def guessnumber():
     while True:
         guess = int(input())
         attempts+=1
-        if guess < number:
-         print('Your guess is too low.')
-         print('Take a guess.')
+        if number == guess:
+         print(f'Good job, {name}! You guessed my number in {attempts} guesses!')
         elif number > guess:
-         print('Your guess is too high')
+         print('Your guess is too low')
          print('Take a guess.')
         else:
-         print(f'Good job, {name}! You guessed my number in {attempts} guesses!')
+         print('Your guess is too high')
+         print('Take a guess.')
 guessnumber()
+
 
