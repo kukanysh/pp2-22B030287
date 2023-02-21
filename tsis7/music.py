@@ -1,10 +1,26 @@
 import pygame
-import os
-import time
 
 pygame.init()
-song_list = ["starboy.mp3", "partymonster.mp3", "falsealarm.mp3", "reminder.mp3", "rockin'.mp3", "secrets.mp3", "truecolors.mp3", "stargirl interlude.mp3", "sidewalks.mp3", "sixfeetunder.mp3", "lovetolay.mp3", "lonelynight.mp3", "attention.mp3", "ordinarylife.mp3", "nothingwithoutyou.mp3", "alliknow.mp3", "dieforyou.mp3", "ifeelitcoming.mp3"]
-song_names = ["Starboy", "Party Monster", "False Alarm", "Reminder", "Rockin'", "Secrets", "True Colors", "Stargirl Interlude", "Sidewalks", "Six Feet Under", "Love To Lay", "A Lonely Night", "Attention", "Ordinary Life", "Nothing Without You", "All I Know", "Die For You", "I Feel It Coming"]
+
+song_list = [
+    "starboy.mp3", "partymonster.mp3", 
+    "falsealarm.mp3", "reminder.mp3", "rockin'.mp3", 
+    "secrets.mp3", "truecolors.mp3", "stargirl interlude.mp3", 
+    "sidewalks.mp3", "sixfeetunder.mp3", "lovetolay.mp3", 
+    "lonelynight.mp3", "attention.mp3", "ordinarylife.mp3", 
+    "nothingwithoutyou.mp3", "alliknow.mp3", "dieforyou.mp3", 
+    "ifeelitcoming.mp3"
+    ]
+
+song_names = [
+    "Starboy", "Party Monster", "False Alarm", 
+    "Reminder", "Rockin'", "Secrets", "True Colors", 
+    "Stargirl Interlude", "Sidewalks", "Six Feet Under", 
+    "Love To Lay", "A Lonely Night", "Attention", 
+    "Ordinary Life", "Nothing Without You", 
+    "All I Know", "Die For You", "I Feel It Coming"
+    ]
+
 screen = pygame.display.set_mode((400, 600))
 pygame.display.set_caption('Starboy album player')
 
@@ -46,4 +62,4 @@ while running:
     screen.blit(pygame.image.load('backstar.jpg'), (0, 0))
     screen.blit(text, (22, 440))
     pygame.display.flip()
-    clock.tick(5.5)
+    clock.tick(5.75)

@@ -11,7 +11,7 @@ def get_image(path):
     return image
 
 pygame.init()
-screen = pygame.display.set_mode((900, 800))
+screen = pygame.display.set_mode((800, 600))
 running= True
 pygame.display.set_caption('Clock app')
 while running:
@@ -19,6 +19,6 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     screen.fill((27, 67, 123))
-    screen.blit(pygame.image.load('mickeyclock.jpeg'), (-250, -100))
+    screen.blit(pygame.image.load('mickeyclock.jpeg'), (0, 0))
 
     pygame.display.flip()
