@@ -22,6 +22,16 @@ while running:
     if pressed[pygame.K_LEFT]: x-=20
     if pressed[pygame.K_RIGHT]: x+=20
 
+    if x <= 28:
+        x = 28
+    elif x >= 612:
+        x = 612
+    if y <= 28:
+        y = 28
+    elif y >= 452:
+        y = 452
+    
+
     screen.fill((255, 255, 255))
     pygame.draw.circle(screen, color, (x, y), 25)
 
