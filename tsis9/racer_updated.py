@@ -35,10 +35,10 @@ game_over = font.render("Game Over", True, BLACK)
 
 
 #background
-background = pygame.image.load("AnimatedStreet.png")
+background = pygame.image.load("AnimatedStreet1.png")
 bg_y = 0
 #second background
-background2 = pygame.image.load("AnimatedStreet.png")
+background2 = pygame.image.load("AnimatedStreet1.png")
 
 #Create a white screen 
 DISPLAYSURF = pygame.display.set_mode((400,600))
@@ -96,21 +96,60 @@ class Coin(pygame.sprite.Sprite):
     def randomize_position(self):
         self.rect.center = (random.randint(COIN_SIZE, SCREEN_WIDTH-COIN_SIZE), random.randint(0, SCREEN_HEIGHT-2*COIN_SIZE))
 
+class Coin3(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("coin3.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = (random.randint(COIN_SIZE, SCREEN_WIDTH-COIN_SIZE), 0)
+    
+    def move(self):
+        global balance
+        self.rect.move_ip(0,SPEED)
+        if (self.rect.bottom > 600):
+            self.randomize_position()
+    
+    def randomize_position(self):
+        self.rect.center = (random.randint(COIN_SIZE, SCREEN_WIDTH-COIN_SIZE), random.randint(0, SCREEN_HEIGHT-3*COIN_SIZE))
+
+class Coin5(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("coin5.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = (random.randint(COIN_SIZE, SCREEN_WIDTH - COIN_SIZE), 0)
+    
+    def move(self):
+        global balance
+        self.rect.move_ip(0,SPEED)
+        if (self.rect.bottom > 600):
+            self.randomize_position()
+
+    def randomize_position(self):
+        self.rect.center = (random.randint(COIN_SIZE, SCREEN_WIDTH-COIN_SIZE), random.randint(0, SCREEN_HEIGHT-4*COIN_SIZE))
 
 #Setting up Sprites        
 P1 = Player()
 E1 = Enemy()
 C1 = Coin()
+C3 = Coin3()
+C5 = Coin5()
 
 #Creating Sprites Groups
 enemies = pygame.sprite.Group()
 enemies.add(E1)
 coins = pygame.sprite.Group()
+coins3 = pygame.sprite.Group()
+coins5 = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(P1)
 all_sprites.add(E1)
 all_sprites.add(C1)
+all_sprites.add(C3)
+all_sprites.add(C5)
 coins.add(C1)
+coins3.add(C3)
+coins5.add(C5)
 
 
 #Adding a new User event 
@@ -171,6 +210,18 @@ while True:
         coins.add(C1)
         all_sprites.add(C1)
     
-    #updating the display
-    pygame.display.update()
-    FramePerSec.tick(FPS)
+    for coin in pygame.sprite.spritecollide(P1, coins3, True):
+        pygame.mixer.Sound('fall_coin.mp3').play()
+        balance += 3
+        C3 = Coin3()
+        coins3.add(C3)
+        all_sprites.add(C3)
+
+    for coin in pygame.sprite.spritecollide(P1, coins5, True):
+        pygame.mixer.Sound('fall_coin.mp3').play()
+        balance += 5
+        C5 = Coin5()
+        coins5.add(C5)
+        all_sprites.add(C5)
+    
+    

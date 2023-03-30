@@ -10,23 +10,28 @@ def main():
     y = 0
     mode = 'green'
     points = []
+    font = pygame.font.SysFont('Calibri', 14)
+    red_color = font.render('Click r button to choose red color', True, (255, 0, 0))
     
+    class Button:
+        def __init__(self, x, y, width, height, image):
+            self.rect = pygame.Rect(x, y, width, height)
+            self.image = image
+
+
     while True:
         
         pressed = pygame.key.get_pressed()
         
-        alt_held = pressed[pygame.K_LALT] or pressed[pygame.K_RALT]
-        ctrl_held = pressed[pygame.K_LCTRL] or pressed[pygame.K_RCTRL]
+        command_held = pressed[pygame.K_LMETA] or pressed[pygame.K_RMETA]
         
         for event in pygame.event.get():
-            
-            # determin if X was clicked, or Ctrl+W or Alt+F4 was used
+        
+            # determine if X was clicked, or Ctrl+W or Alt+F4 was used
             if event.type == pygame.QUIT:
                 return
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w and ctrl_held:
-                    return
-                if event.key == pygame.K_F4 and alt_held:
+                if event.key == pygame.K_w and command_held:
                     return
                 if event.key == pygame.K_ESCAPE:
                     return
@@ -38,6 +43,8 @@ def main():
                     mode = 'green'
                 elif event.key == pygame.K_b:
                     mode = 'blue'
+                elif event.key == pygame.K_e:
+                    mode = 'black'
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: # left click grows radius 
@@ -73,6 +80,8 @@ def drawLineBetween(screen, index, start, end, width, color_mode):
         color = (c2, c1, c1)
     elif color_mode == 'green':
         color = (c1, c2, c1)
+    elif color_mode == 'black':
+        color = (0, 0, 0)
     
     dx = start[0] - end[0]
     dy = start[1] - end[1]
