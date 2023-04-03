@@ -1,97 +1,88 @@
 import pygame
+from pygame.locals import *
 
-def main():
-    pygame.init()
-    screen = pygame.display.set_mode((640, 480))
-    clock = pygame.time.Clock()
-    
-    radius = 15
-    x = 0
-    y = 0
-    mode = 'green'
-    points = []
-    font = pygame.font.SysFont('Calibri', 14)
-    red_color = font.render('Click r button to choose red color', True, (255, 0, 0))
-    
-    class Button:
-        def __init__(self, x, y, width, height, image):
-            self.rect = pygame.Rect(x, y, width, height)
-            self.image = image
+pygame.init()
+
+window = pygame.display.set_mode((640, 480))
+pygame.display.set_caption("Drawing Shapes")
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+
+draw_color = BLACK
+draw_size = 1
+
+def draw_shape(mouse_pos, click, shape):
+    if click[0] == 1:
+        if shape == "rect":
+            pygame.draw.rect(window, draw_color, (mouse_pos[0], mouse_pos[1], 50, 50), draw_size)
+        elif shape == "circle":
+            pygame.draw.circle(window, draw_color, mouse_pos, 25, draw_size)
+        elif shape == "eraser":
+            pygame.draw.rect(window, BLACK, (mouse_pos[0], mouse_pos[1], 20, 20), draw_size)
 
 
-    while True:
-        
-        pressed = pygame.key.get_pressed()
-        
-        command_held = pressed[pygame.K_LMETA] or pressed[pygame.K_RMETA]
-        
-        for event in pygame.event.get():
-        
-            # determine if X was clicked, or Ctrl+W or Alt+F4 was used
-            if event.type == pygame.QUIT:
-                return
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w and command_held:
-                    return
-                if event.key == pygame.K_ESCAPE:
-                    return
-            
-                # determine if a letter key was pressed 
-                if event.key == pygame.K_r:
-                    mode = 'red'
-                elif event.key == pygame.K_g:
-                    mode = 'green'
-                elif event.key == pygame.K_b:
-                    mode = 'blue'
-                elif event.key == pygame.K_e:
-                    mode = 'black'
-            
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1: # left click grows radius 
-                    radius = min(200, radius + 1)
-                elif event.button == 3: # right click shrinks radius
-                    radius = max(1, radius - 1)
-            
-            if event.type == pygame.MOUSEMOTION:
-                # if mouse moved, add point to list 
-                position = event.pos
-                points = points + [position]
-                points = points[-256:]
-                
-        screen.fill((0, 0, 0))
-        
-        # draw all points 
-        i = 0
-        while i < len(points) - 1:
-            drawLineBetween(screen, i, points[i], points[i + 1], radius, mode)
-            i += 1
-        
-        pygame.display.flip()
-        
-        clock.tick(60)
+# Initialize the shape variable to None
+shape = None
 
-def drawLineBetween(screen, index, start, end, width, color_mode):
-    c1 = max(0, min(255, 2 * index - 256))
-    c2 = max(0, min(255, 2 * index))
-    
-    if color_mode == 'blue':
-        color = (c1, c1, c2)
-    elif color_mode == 'red':
-        color = (c2, c1, c1)
-    elif color_mode == 'green':
-        color = (c1, c2, c1)
-    elif color_mode == 'black':
-        color = (0, 0, 0)
-    
-    dx = start[0] - end[0]
-    dy = start[1] - end[1]
-    iterations = max(abs(dx), abs(dy))
-    
-    for i in range(iterations):
-        progress = 1.0 * i / iterations
-        aprogress = 1 - progress
-        x = int(aprogress * start[0] + progress * end[0])
-        y = int(aprogress * start[1] + progress * end[1])
-        pygame.draw.circle(screen, color, (x, y), width)
+# Set the game loop
+while True:
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
 
-main()
+        # Check for key presses
+        if event.type == KEYDOWN:
+            if event.key == K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+
+            # Check for color selection
+            if event.key == K_r:
+                draw_color = RED
+            elif event.key == K_g:
+                draw_color = GREEN
+            elif event.key == K_b:
+                draw_color = BLUE
+            elif event.key == K_y:
+                draw_color = YELLOW
+            elif event.key == K_w:
+                draw_color = WHITE
+            elif event.key == K_k:
+                draw_color = BLACK
+
+            # Check for shape selection
+            if event.key == K_1:
+                shape = "rect"
+            elif event.key == K_2:
+                shape = "circle"
+            elif event.key == K_3:
+                shape = "eraser"
+
+            # Check for size selection
+            if event.key == K_4:
+                draw_size = 1
+            elif event.key == K_5:
+                draw_size = 5
+            elif event.key == K_6:
+                draw_size = 10
+
+        # Check for mouse button presses
+        if event.type == MOUSEBUTTONDOWN:
+            click = pygame.mouse.get_pressed()
+            if click[0] == 1:
+                draw_shape(pygame.mouse.get_pos(), click, shape)
+
+        # Check for mouse motion
+        if event.type == MOUSEMOTION:
+            click = pygame.mouse.get_pressed()
+            if click[0] == 1:
+                draw_shape(pygame.mouse.get_pos(), click, shape)
+
+    # Update the display
+    pygame.display.update()
