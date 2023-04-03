@@ -1,190 +1,167 @@
+#imports
 import pygame
 import random
-import sys
+
+#initialization
+pygame.init()
+
+#variables and colors
+WIDTH, HEIGHT = 800, 800
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+RED = (255, 0, 0)
+BLACK = (0, 0, 0)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+BLOCK_SIZE = 40
+WHITE = (255, 255, 255)
+clock = pygame.time.Clock()
+font = pygame.font.SysFont("SF Pro", 42)
+pygame.display.set_caption("Snake")
 
 
-# Размеры окна в пикселях
-WINDOW_WIDTH = 640
-WINDOW_HEIGHT = 480
-
-CELL_SIZE = 20
-
-# Размеры сетки в ячейках
-WIDTH = int(WINDOW_WIDTH / CELL_SIZE)
-HEIGHT = int(WINDOW_HEIGHT / CELL_SIZE)
-
-# Цвета
-BG_COLOR = (0, 0, 0)
-GRID_COLOR = (40, 40, 40)
-APPLE_COLOR = (255, 0, 0)
-APPLE_OUTER_COLOR = (155, 0, 0)
-SNAKE_COLOR = (0, 255, 0)
-SNAKE_OUTER_COLOR = (0, 155, 0)
-
-
-UP = 'up'
-DOWN = 'down'
-LEFT = 'left'
-RIGHT = 'right'
-
-HEAD = 0
-
-
-FPS = 15
-
-
-class Cell:
+class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
+#declaring Snake class
+class Snake:
+    def __init__(self):
+        self.body = [
+            Point(
+                x=WIDTH // BLOCK_SIZE // 2,
+                y=HEIGHT // BLOCK_SIZE // 2,
+            ),
+            Point(
+                x=WIDTH // BLOCK_SIZE // 2 + 1,
+                y=HEIGHT // BLOCK_SIZE // 2,
+            ),
+        ]
 
+    def draw(self):
+        head = self.body[0]
+        pygame.draw.rect(
+            SCREEN,
+            RED,
+            pygame.Rect(
+                head.x * BLOCK_SIZE,
+                head.y * BLOCK_SIZE,
+                BLOCK_SIZE,
+                BLOCK_SIZE,
+            )
+        )
+        for body in self.body[1:]:
+            pygame.draw.rect(
+                SCREEN,
+                BLUE,
+                pygame.Rect(
+                    body.x * BLOCK_SIZE,
+                    body.y * BLOCK_SIZE,
+                    BLOCK_SIZE,
+                    BLOCK_SIZE,
+                )
+            )
+    #moving the snake
+    def move(self, dx, dy):
+        for idx in range(len(self.body) - 1, 0, -1):
+            self.body[idx].x = self.body[idx - 1].x
+            self.body[idx].y = self.body[idx - 1].y
+        # [Point(0, 1), Point(2, 5), Point(5, 9)]
+        # [Point(0, 0), Point(0, 1), Point(2, 5)]
+        self.body[0].x += dx
+        self.body[0].y += dy
+
+    def check_collision(self, food):
+        if food.location.x != self.body[0].x:
+            return False
+        if food.location.y != self.body[0].y:
+            return False
+        return True
+    
+    def wall_collision(self):
+        if self.body[0].x > WIDTH or self.body[0].x < 0 or \
+            self.body[0].y < 0 or self.body[0].y > HEIGHT:
+                return True
+        return False
+
+#drawing the grid
+def draw_grid():
+    for x in range(0, WIDTH, BLOCK_SIZE):
+        pygame.draw.line(SCREEN, WHITE, start_pos=(x, 0), end_pos=(x, HEIGHT), width=1)
+    for y in range(0, HEIGHT, BLOCK_SIZE):
+        pygame.draw.line(SCREEN, WHITE, start_pos=(0, y), end_pos=(WIDTH, y), width=1)
+
+#declaring Food class
+class Food:
+    def __init__(self, x, y):
+        self.location = Point(x, y)
+
+    def draw(self):
+        pygame.draw.rect(
+            SCREEN,
+            GREEN,
+            pygame.Rect(
+                self.location.x * BLOCK_SIZE,
+                self.location.y * BLOCK_SIZE,
+                BLOCK_SIZE,
+                BLOCK_SIZE,
+            )
+        )
+
+#main loop
 def main():
-    global FPS_CLOCK
-    global DISPLAY
+    running = True
+    snake = Snake()
+    food = Food(5, 5)
+    dx, dy = 0, 0
+    score = 0
+    level = 0
+    speed = 5
+    
 
-    pygame.init()
-    FPS_CLOCK = pygame.time.Clock()
-    DISPLAY = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-    pygame.display.set_caption('Wormy')
+    while running:
+        SCREEN.fill(BLACK)
 
-    while True:
-        # Мы всегда будем начинать игру с начала. После проигрыша сразу
-        # начинается следующая.
-        run_game()
-
-
-def run_game():
-    # TODO(2.1): создать яблоко в позиции (20, 10)
-
-    # TODO(3.1): создать змейку. Пусть она состоит из трех ячеек
-    #  в строке 10 и столбцах 3, 4, 5.
-    #  Какой тип данных удобен для представления змейки?
-
-    # TODO(4.1): задать исходное направление движения змейки.
-    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                terminate()
-            # TODO(7.1): обработайте событие pygame.KEYDOWN
-            #  и при необходимости измените направление движения змейки.
+                running = False
 
-        # TODO(5.1): если змейка достигла границы окна, завершить игру.
-        #  Для проверки воспользуйтесь функцией snake_hit_edge.
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    dx, dy = 0, -1
+                elif event.key == pygame.K_DOWN:
+                    dx, dy = 0, +1
+                elif event.key == pygame.K_RIGHT:
+                    dx, dy = 1, 0
+                elif event.key == pygame.K_LEFT:
+                    dx, dy = -1, 0
 
-        # TODO(8.1): если змейка задела свой хвост, завершить игру.
-        #  Для проверки восппользуйтесь функцией snake_hit_self.
-
-        # TODO(6.1): обработайте ситуацию столкновения змейки с яблоком.
-        #  В этом случае нужно:
-        #  * Увеличить размер змейки
-        #  * Создать новое яблоко.
-
-        # TODO(4.2): сдвинуть змейку в заданном направлении
-        # TODO(2.2): передать яблоко в функцию отрисовки кадра
-        # TODO(3.2): передать змейку в функцию отрисовки кадра
-        draw_frame(None, None)
-        FPS_CLOCK.tick(FPS)
-
-
-def draw_frame(snake, apple):
-    DISPLAY.fill(BG_COLOR)
-    draw_grid()
-    draw_snake(snake)
-    draw_apple(apple)
-    pygame.display.update()
-
-
-def draw_grid():
-    # TODO(1.2): нарисовать сетку.
-    #  Шаг CELL_SIZE
-    #  Цвет GRID_COLOR
-    #  https://www.pygame.org/docs/ref/draw.html#pygame.draw.line
-    ...
-
-
-def draw_apple(apple):
-    # TODO(2.3): нарисовать яблоко.
-    ...
-
-
-def draw_snake(snake):
-    # TODO(3.3): нарисовать змейку.
-    ...
-
-
-def draw_cell(cell, outer_color, inner_color):
-    # TODO(2.4): вспомогательная функция для рисования ячейки.
-    #  Ячейка будет состоять из двух квадратов разных цветов:
-    #  Больший квадрат закрашивается цветом outer_color,
-    #  меньший - inner_color.
-    #  Расстояние между внешним и внутренним квадратом
-    #  принять за 4 пикселя.
-    ...
-
-
-def move_snake():
-    # TODO(4.3): реализовать перемещение змейки на одну ячейку
-    #  в заданном направлении.
-    #  * Какие параметры будет принимать функция?
-    #  * Из каких действий будет состоять перемещение змейки?
-    ...
-
-
-def get_snake_new_head():
-    # TODO(4.4): реализовать функцию определения нового
-    #  положения головы змейки.
-    #  * Какие параметры будет принимать функция?
-    #  * Что функция будет возвращать?
-    ...
-
-
-def snake_hit_edge():
-    # TODO(5.2): функция возвращает True,
-    #  если змейка пересекла одну из границ окна.
-    ...
-
-
-def snake_hit_apple():
-    # TODO(6.2): функция возвращает True, если голова
-    #  змейки находится в той же ячейке, что и яблоко.
-    ...
-
-
-def snake_grow():
-    # TODO(6.3): предложите максимально простой
-    #  способ увеличения длины змейки.
-    ...
-
-
-def new_apple():
-    # TODO(6.4): функция возвращает случайную ячейку,
-    #  в которой будет располагаться яблоко.
-    #  Для генерации случайной координаты воспользуйтесь
-    #  функцией random.randint(a, b)
-    ...
-
-
-def get_direction():
-    # TODO(7.3): функция возвращает направление движения
-    #  в зависимости от нажатой клавиши:
-    #  * pygame.K_LEFT
-    #  * pygame.K_RIGHT
-    #  * pygame.K_UP
-    #  * pygame.K_DOWN
-    #  Если нажата клавиша противоположного направления движения,
-    #  то не менять направление.
-    ...
-
-def snake_hit_self():
-    # TODO(8.2): функция возвращает True, если голова змеи
-    #  пересеклась хотя бы с одним блоком хвоста.
-    ...
-
-
-def terminate():
-    pygame.quit()
-    sys.exit()
+        snake.move(dx, dy)
+        if snake.check_collision(food):
+            snake.body.append(
+                Point(snake.body[-1].x, snake.body[-1].y)
+            )
+            score += 1
+            if score%4 == 0:
+                level += 1
+                speed += 2
+            
+            food.location.x = random.randint(0, WIDTH // BLOCK_SIZE - 1)
+            food.location.y = random.randint(0, HEIGHT // BLOCK_SIZE - 1)
+        
+        if snake.wall_collision():
+            running = False
+        
+        
+        snake.draw()
+        food.draw()
+        draw_grid()
+        text = font.render("Your score: " + str(score), True, RED)
+        level_text = font.render("Current level: " + str(level), True, RED)
+        SCREEN.blit(text, (0, 0))
+        SCREEN.blit(level_text, (500, 0))
+        pygame.display.flip()
+        clock.tick(speed)
 
 
 if __name__ == '__main__':
