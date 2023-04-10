@@ -25,6 +25,7 @@ COIN_SIZE = 35
 SPEED = 5
 SCORE = 0
 balance = 0
+coin_count = 0
 background_speed = 10
 
 
@@ -54,12 +55,17 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.center = (random.randint(40,SCREEN_WIDTH-40), 0)
 
       def move(self):
+        global coin_count
+        global SPEED
         global SCORE
         self.rect.move_ip(0,SPEED)
         if (self.rect.bottom > 690):
             SCORE += 1
             self.rect.top = 0
             self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
+        if coin_count >= 15:
+            SPEED +=2
+            coin_count = 0
 
 #declaring a player class
 class Player(pygame.sprite.Sprite):
@@ -154,7 +160,7 @@ coins5.add(C5)
 
 #Adding a new User event 
 INC_SPEED = pygame.USEREVENT + 1
-pygame.time.set_timer(INC_SPEED, 1000)
+pygame.time.set_timer(INC_SPEED, 3000)
 
 #Game Loop
 while True:
@@ -163,7 +169,7 @@ while True:
     #Cycles through all events occuring  
     for event in pygame.event.get():
         if event.type == INC_SPEED:
-              SPEED += 0.5      
+              SPEED += 0.3      
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
@@ -206,6 +212,7 @@ while True:
     for coin in pygame.sprite.spritecollide(P1, coins, True):
         pygame.mixer.Sound('fall_coin.mp3').play()
         balance += 1
+        coin_count += 1
         C1 = Coin()
         coins.add(C1)
         all_sprites.add(C1)
@@ -213,6 +220,7 @@ while True:
     for coin in pygame.sprite.spritecollide(P1, coins3, True):
         pygame.mixer.Sound('fall_coin.mp3').play()
         balance += 3
+        coin_count += 3
         C3 = Coin3()
         coins3.add(C3)
         all_sprites.add(C3)
@@ -220,8 +228,12 @@ while True:
     for coin in pygame.sprite.spritecollide(P1, coins5, True):
         pygame.mixer.Sound('fall_coin.mp3').play()
         balance += 5
+        coin_count += 5
         C5 = Coin5()
         coins5.add(C5)
         all_sprites.add(C5)
+    
+    pygame.display.update()
+    FramePerSec.tick(FPS)
     
     

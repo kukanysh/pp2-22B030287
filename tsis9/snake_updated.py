@@ -11,7 +11,7 @@ SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
 BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
+COLOR = (0, 255, 0)
 BLOCK_SIZE = 40
 WHITE = (255, 255, 255)
 clock = pygame.time.Clock()
@@ -79,9 +79,10 @@ class Snake:
         return True
     
     def wall_collision(self):
-        if self.body[0].x > WIDTH or self.body[0].x < 0 or \
-            self.body[0].y < 0 or self.body[0].y > HEIGHT:
-                return True
+        if self.body[0].x >= WIDTH or self.body[0].x <= 0:
+            return True
+        if self.body[0].y >= HEIGHT or self.body[0].y <= 0:
+            return True
         return False
 
 #drawing the grid
@@ -99,7 +100,7 @@ class Food:
     def draw(self):
         pygame.draw.rect(
             SCREEN,
-            GREEN,
+            COLOR,
             pygame.Rect(
                 self.location.x * BLOCK_SIZE,
                 self.location.y * BLOCK_SIZE,
@@ -116,11 +117,18 @@ def main():
     dx, dy = 0, 0
     score = 0
     level = 0
+    weight = 1
     speed = 5
+
+    time = 0
+    food_timer = 2
     
 
     while running:
-        SCREEN.fill(BLACK)
+        SCREEN.fill((54, 123, 32))
+
+        dt = clock.tick(60)/100
+        time += dt
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -135,13 +143,24 @@ def main():
                     dx, dy = 1, 0
                 elif event.key == pygame.K_LEFT:
                     dx, dy = -1, 0
+        if score != 0 and score%3 == 0:
+            SCREEN.fill((255, 191, 0))
+            weight = random.randint(2, 3)
+        else:
+            weight = 1
+
+        if score!= 0 and score%5 == 0:
+            if time >= food_timer:
+                food.location.x = random.randint(0, WIDTH // BLOCK_SIZE - 1)
+                food.location.y = random.randint(0, HEIGHT // BLOCK_SIZE - 1)
+                time = 0
 
         snake.move(dx, dy)
         if snake.check_collision(food):
             snake.body.append(
                 Point(snake.body[-1].x, snake.body[-1].y)
             )
-            score += 1
+            score += weight
             if score%4 == 0:
                 level += 1
                 speed += 2

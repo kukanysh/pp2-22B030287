@@ -1,4 +1,5 @@
 import pygame
+import math
 from pygame.locals import *
 
 pygame.init()
@@ -19,11 +20,30 @@ draw_size = 1
 def draw_shape(mouse_pos, click, shape):
     if click[0] == 1:
         if shape == "rect":
-            pygame.draw.rect(window, draw_color, (mouse_pos[0], mouse_pos[1], 50, 50), draw_size)
+            pygame.draw.rect(window, draw_color, (mouse_pos[0], mouse_pos[1], 50, 20), draw_size)
         elif shape == "circle":
             pygame.draw.circle(window, draw_color, mouse_pos, 25, draw_size)
+        elif shape == "square":
+            pygame.draw.rect(window, draw_color, (mouse_pos[0], mouse_pos[1], 50, 50), draw_size)
+        elif shape == "rtriangle":
+            pygame.draw.polygon(window, draw_color, ((mouse_pos[0], mouse_pos[1]), (mouse_pos[0], mouse_pos[1]+50), (mouse_pos[0]+50, mouse_pos[1])))
+        elif shape == "rhombus":
+            size = 50
+            x,y = pygame.mouse.get_pos()
+            top_left = (x - size, y)
+            top_right = (x, y - size)
+            bottom_left = (x, y + size)
+            bottom_right = (x + size, y)
+            pygame.draw.polygon(window, draw_color, [top_left, top_right, bottom_right, bottom_left])
+        elif shape == "etriangle":
+            side_length = 50
+            center_x, center_y = pygame.mouse.get_pos()
+            vertex1 = (center_x, center_y - side_length)
+            vertex2 = (center_x - side_length * math.sin(math.pi / 3), center_y + side_length * math.cos(math.pi / 3))
+            vertex3 = (center_x + side_length * math.sin(math.pi / 3), center_y + side_length * math.cos(math.pi / 3))
+            pygame.draw.polygon(window, draw_color, [vertex1, vertex2, vertex3])            
         elif shape == "eraser":
-            pygame.draw.rect(window, BLACK, (mouse_pos[0], mouse_pos[1], 20, 20), draw_size)
+            pygame.draw.rect(window, BLACK, (mouse_pos[0], mouse_pos[1], 40, 40), draw_size)
 
 
 # Initialize the shape variable to None
@@ -34,13 +54,11 @@ while True:
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
-            sys.exit()
 
         # Check for key presses
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 pygame.quit()
-                sys.exit()
 
             # Check for color selection
             if event.key == K_r:
@@ -62,15 +80,24 @@ while True:
             elif event.key == K_2:
                 shape = "circle"
             elif event.key == K_3:
+                shape = "square"
+            elif event.key == K_4:
+                shape = "rtriangle"
+            elif event.key == K_5:
+                shape = "etriangle"
+            elif event.key == K_6:
+                shape = "rhombus"
+            elif event.key == K_7:
                 shape = "eraser"
+            
 
             # Check for size selection
-            if event.key == K_4:
+            if event.key == K_8:
                 draw_size = 1
-            elif event.key == K_5:
-                draw_size = 5
-            elif event.key == K_6:
+            elif event.key == K_9:
                 draw_size = 10
+            elif event.key == K_0:
+                draw_size = 15
 
         # Check for mouse button presses
         if event.type == MOUSEBUTTONDOWN:
