@@ -164,7 +164,6 @@ pygame.time.set_timer(INC_SPEED, 3000)
 
 #Game Loop
 while True:
-    
       
     #Cycles through all events occuring  
     for event in pygame.event.get():
@@ -173,7 +172,6 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-
 
     #display the scores
     DISPLAYSURF.blit(background, (0, bg_y))
@@ -186,12 +184,10 @@ while True:
     show_balance = font_small.render("Balance: " + str(balance), True, BLACK)
     DISPLAYSURF.blit(show_balance, (270, 0))
 
-
     #Moves and Re-draws all Sprites
     for entity in all_sprites:
         entity.move()
         DISPLAYSURF.blit(entity.image, entity.rect)
-
 
     #To be run if collision occurs between Player and Enemy
     if pygame.sprite.spritecollideany(P1, enemies):
@@ -206,8 +202,6 @@ while True:
             pygame.quit()
             sys.exit()
 
-    
-     
     #To be run if collision occurs between Player and Coin
     for coin in pygame.sprite.spritecollide(P1, coins, True):
         pygame.mixer.Sound('fall_coin.mp3').play()
@@ -217,6 +211,7 @@ while True:
         coins.add(C1)
         all_sprites.add(C1)
     
+    #colliding with 3 coins
     for coin in pygame.sprite.spritecollide(P1, coins3, True):
         pygame.mixer.Sound('fall_coin.mp3').play()
         balance += 3
@@ -225,6 +220,7 @@ while True:
         coins3.add(C3)
         all_sprites.add(C3)
 
+    #colliding with 5 coins
     for coin in pygame.sprite.spritecollide(P1, coins5, True):
         pygame.mixer.Sound('fall_coin.mp3').play()
         balance += 5
@@ -233,6 +229,7 @@ while True:
         coins5.add(C5)
         all_sprites.add(C5)
     
+    #updating the display
     pygame.display.update()
     FramePerSec.tick(FPS)
     
