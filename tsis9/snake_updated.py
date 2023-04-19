@@ -79,9 +79,9 @@ class Snake:
         return True
     
     def wall_collision(self):
-        if self.body[0].x >= WIDTH or self.body[0].x <= 0:
+        if self.body[0].x >= 19 or self.body[0].x <= 0:
             return True
-        if self.body[0].y >= HEIGHT or self.body[0].y <= 0:
+        if self.body[0].y >= 19 or self.body[0].y <= 0:
             return True
         return False
 
