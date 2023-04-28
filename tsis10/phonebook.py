@@ -15,20 +15,24 @@ way = 'enter'
 def update(sn, way, newv):
     cur.execute("""UPDATE PhoneBook
     SET {} = '{}'
-    WHERE surname = '{}'
+    WHERE username = '{}'
     """.format(mode,newv,sn))
 
 def delete(sn):
     cur.execute("""DELETE FROM Phonebook
-    WHERE surname='{}'
+    WHERE username='{}'
     """.format(sn))
 
-#Inserting data
+
 print("===========================================")
 print("What type of action do you want to execute?")
 print("1) UPLOAD DATA FROM CSV FILE")
 print("2) UPLOAD DATA FROM CONSOLE")
+print("3) UPDATE DATA")
+print("4)DELETE FROM Phonebook")
 print("===========================================")
+
+#Inserting data
 num = int(input())
 if num == 1:
     print("Enter the name of the file:")
@@ -55,36 +59,40 @@ elif num == 2:
         phone_number = input("Enter phone number: ")
         tup.append(phone_number)
 
-        cur.execute("""INSERT INTO Phonebook (first_name, last_name, username, phone_number) VALUES {};""".format(tup))
+        cur.execute("INSERT INTO Phonebook (first_name, last_name, username, phone_number) VALUES (%s, %s, %s, %s)", tup)
 
-#Updating data
-while True:
-    print('If you want to update type "update", else type "stop"')
-    way = input()
-    if way == 'stop':
-        break
-    cur.execute("""SELECT * FROM PhoneBook""")
-    print(cur.fetchall())
-    print("Enter username: ")
-    change = input()
-    print("Which data you want to change? ")
-    way = input()
-    print("Enter new data:")
-    new_data = input()
-    update(change, way, new_data)
+elif num == 3:
+    #Updating data
+    while True:
+        print('If you want to update type "update", else type "stop"')
+        way = input()
+        if way == 'stop':
+            break
+        cur.execute("""SELECT * FROM PhoneBook""")
+        print(cur.fetchall())
+        print("Enter username: ")
+        change = input()
+        print("Which data you want to change? ")
+        way = input()
+        print("Enter new data:")
+        new_data = input()
+        update(change, way, new_data)
 
-#Deleting data
-while True:
-    print('If you want to delete type "delete", else type "stop"')
-    way = input()
-    if way == 'stop':
-        break
-    cur.execute("""SELECT * FROM PhoneBook""")
-    print(cur.fetchall())
-    print("Enter username: ")
-    deleted = input()
-    delete(deleted)
+elif num == 4:
+    #Deleting data
+    while True:
+        print('If you want to delete type "delete", else type "stop"')
+        way = input()
+        if way == 'stop':
+            break
+        cur.execute("""SELECT * FROM PhoneBook""")
+        print(cur.fetchall())
+        print("Enter username: ")
+        deleted = input()
+        delete(deleted)
 
+else:
+    print('ERROR')
 
 connection.commit()
 cur.close()
