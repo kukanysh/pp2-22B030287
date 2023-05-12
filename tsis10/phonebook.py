@@ -16,7 +16,7 @@ def update(sn, way, newv):
     cur.execute("""UPDATE PhoneBook
     SET {} = '{}'
     WHERE username = '{}'
-    """.format(mode,newv,sn))
+    """.format(way,newv,sn))
 
 def delete(sn):
     cur.execute("""DELETE FROM Phonebook
